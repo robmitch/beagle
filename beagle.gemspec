@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
 
   gem.version = Beagle::VERSION.dup
   gem.platform = Gem::Platform::RUBY
-  gem.add_runtime_dependency("rspec-core", "~> 2.0.0")
+  gem.add_runtime_dependency("rspec-core", ">= 2.0.0")
 
   gem.add_development_dependency("rake", "~> 0.8.7")
   gem.add_development_dependency("rspec-core", "~> 2.0.0")
