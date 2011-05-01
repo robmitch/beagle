@@ -5,6 +5,11 @@ module Beagle
 
   class TimedFormatter < RSpec::Core::Formatters::BaseFormatter
 
+    def initialize(options)
+      super
+      @metrics = Hash.new{|h,k| h[k] = Beagle::Examples.new}
+    end
+
     def example_started(example)
       super
       parts = example.file_path.split('/spec/')
@@ -27,7 +32,7 @@ module Beagle
     def start_dump
       template = File.read(File.expand_path('../templates/index.rhtml', File.dirname(__FILE__)))
       rhtml = ERB.new(template, nil, ">")
-      metrics = Metrics.new(@metrics)
+      metrics = Beagle::Metrics.new(@metrics)
       FileUtils.mkdir_p @out_dir
       outfile = "#{@out_dir}/index.html"
       FileUtils.rm_rf outfile
