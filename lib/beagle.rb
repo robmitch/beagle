@@ -1,0 +1,1 @@
+require 'beagle/timed_formatter'

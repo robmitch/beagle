@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>RSpec Metrics</title>
+
+		<style type="text/css">
+		  body {
+        margin-left: 0 auto; 
+        margin-right: 0 auto;
+        text-align:center;
+		    width:100%;
+		  }
+		  table {
+		    border-collapse:collapse;
+		    border-spacing:0;
+		  }
+		  table th,td {
+		    padding:3px 5px;
+		    text-align:left;
+		    border: 1px solid #DDDDDD;
+		  }
+		  table th {
+		    font-weight:bold;
+		  }
+		  table tfoot td {
+		    font-weight:bold;
+		  }
+		  table thead tr {
+		    background-color: #6600FF;
+		  } 
+		  .chart {
+		    width: 600px; 
+		    height: 400px; 
+		    margin: 0 auto;
+		    display:inline-block
+		  }
+		  #details {
+		    width: 1200px;
+		    margin: 0 auto;
+		  }
+		  #detail {
+		    width:75%;
+		  }
+		  #summary {
+		    width:18%;
+		  }
+		  #detail,#summary {
+		    display:inline-block;
+		    vertical-align:top;
+		    padding:0 5px 0 5px;
+		  }
+		  .invisible {
+		    display:none;
+		  }
+		  .current {
+		    background-color: #6600FF;
+		  }
+		  .summary,.spec_file {
+		    cursor:pointer;
+		  }
+		  .numeric {
+		    text-align:right;
+		  }
+		</style>
+
+		<!-- 1. Add these JavaScript inclusions in the head of your page -->
+		<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+		<script type="text/javascript" src="js/highcharts.js"></script>
+
+		<!-- 2. Add the JavaScript to initialize the chart on document ready -->
+		<script type="text/javascript">
+		$(document).ready(function() {
+
+      var options = {
+        chart: {
+          renderTo: '',
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false
+        },
+        title: {
+          text: ''
+        },
+        credits: {
+          enabled: false
+        },
+        tooltip: {
+          formatter: function() {
+            return '<b>'+ this.point.name +'</b>: '+ this.y;
+          }
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: true,
+              color: '#000000',
+              connectorColor: '#000000',
+              formatter: function() {
+                return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';
+              }
+            }
+          }
+        },
+        series: [{
+          type: 'pie',
+          name: '',
+          data: null
+          }]
+        }
+        options.chart.renderTo='spec_times';
+        options.title.text='Spec Times';
+        options.series[0].name='Spec Times';
+        options.series[0].data=[<%= @spec_types.map{|type| "['#{type}', #{@metrics[type].duration.round(2)}]"}.join(", ") %>];
+
+        new Highcharts.Chart(options);
+
+        options.chart.renderTo='spec_count';
+        options.title.text='Spec Count';
+        options.series[0].name='Spec Count';
+        options.series[0].data=[<%= @spec_types.map{|type| "['#{type}', #{@metrics[type].size}]"}.join(", ") %>];
+
+        new Highcharts.Chart(options);
+
+        $('.summary').live('click', function() {
+          $('.detail').hide();
+          $('table#' + $(this).attr('id')).show();
+          $('.current').removeClass('current');
+          $(this).addClass('current');
+        });
+
+        $('.spec_file').live('click', function() {
+          $(this).next().toggleClass('invisible');
+        });
+      });
+		</script>
+	<body>
+
+		<!-- 3. Add the container -->
+    <div>
+		  <div id="spec_times" class="chart"></div>
+		  <div id="spec_count" class="chart"></div>
+		  <div id="details">
+		    <div id="summary">
+		      <table id="by_type">
+		      <thead>
+		        <tr>
+		          <th>Spec type</td>
+		          <th class="numeric">Count</td>
+		          <th class="numeric">Duration</td>
+		        </tr>
+		      </thead>
+		      <tbody>
+		        <% totals = {:count => 0, :time => 0} %>
+		        <% @spec_types.each do |type| %>
+		          <% metrics = @metrics[type] %>
+		          <% totals[:count] += metrics.size %>
+		          <% totals[:time] += metrics.duration %>
+		        <tr  id="<%= type %>" class="<%= type == @spec_types.first ? 'current' : ''%> summary">
+		          <td><%= type %></td>
+		          <td class="numeric"><%= metrics.size %></td>
+		          <td class="numeric"><%= metrics.duration.round(2) %></td>
+		        </tr>
+            <% end %>
+		      </tbody>    
+		      <tfoot>
+            <tr>
+		          <td>Totals</td>
+		          <td class="numeric"><%= totals[:count] %></td>
+		          <td class="numeric"><%= totals[:time].round(2) %></td>
+		        </tr>
+		      </tfoot>
+		    </table>
+        </div>
+        <div id="detail">
+        <% @spec_types.each do |type| %>
+          <table id="<%= type %>" class="<%= type == @spec_types.first ? 'visible' : 'invisible' %> detail">
+          <thead>
+            <tr>
+              <th width="80%"><%= type %> specs</th>
+              <th class="numeric" width="10%">Examples</th>
+              <th class="numeric" width="10%">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% files = [] %>  
+          <% @metrics[type].files.each do |file|%>
+            <tr class="spec_file">
+              <td><%= file.first.gsub(/^.+\/spec/, '.../spec') %></td>
+              <td class="numeric"><%= file[1] %></td>
+              <td class="numeric"><%= file.last.round(2) %></td>
+            </tr>
+            <tr class="invisible">
+              <td colspan="3">
+                <table>
+                  <tbody>
+                    <% @metrics[type].examples(file.first).each do |example| %>
+                    <tr>
+                      <td width="90%"><%= example.first %></td>
+                      <td class="numeric" width="10%"><%= example.last.to_f.round(2) %></td>
+                    </tr>  
+                    <% end %>
+                  </tbody>  
+                </table>  
+              </td>
+            </tr>
+          <% end %>
+          <tbody>
+        </table>
+	      <% end %>
+        </div>
+		  </div>
+    </div>
+				
+	</body>
+</html>
