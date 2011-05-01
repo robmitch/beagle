@@ -64,13 +64,11 @@
 		  }
 		</style>
 
-		<!-- 1. Add these JavaScript inclusions in the head of your page -->
 		<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="js/highcharts.js"></script>
-
-		<!-- 2. Add the JavaScript to initialize the chart on document ready -->
 		<script type="text/javascript">
-		$(document).ready(function() {
+
+		  $(document).ready(function() {
 
       var options = {
         chart: {
@@ -110,6 +108,7 @@
           data: null
           }]
         }
+        
         options.chart.renderTo='spec_times';
         options.title.text='Spec Times';
         options.series[0].name='Spec Times';
@@ -135,10 +134,10 @@
           $(this).next().toggleClass('invisible');
         });
       });
-		</script>
-	<body>
 
-		<!-- 3. Add the container -->
+		</script>
+
+	<body>
     <div>
 		  <div id="spec_times" class="chart"></div>
 		  <div id="spec_count" class="chart"></div>
@@ -213,6 +212,5 @@
         </div>
 		  </div>
     </div>
-				
 	</body>
 </html>
