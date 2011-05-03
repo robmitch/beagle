@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     beagle (0.1.0)
-      rspec-core (~> 2.0.0)
+      rspec-core (>= 2.0.0)
 
 GEM
   remote: http://rubygems.org/

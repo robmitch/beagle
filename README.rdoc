@@ -1,0 +1,19 @@
+== Beagle
+
+RSpec formatter to analyse your spec suite giving you a breakdown of how long your specs are taking to execute.
+
+== Install
+
+  gem install beagle
+
+== Usage
+
+Add Beagle::TimedFormatter as a formatter to your rspec run, either from the command line or your rake task eg:
+  rspec spec/models/your_spec.rb -f Beagle::TimedFormatter
+  
+  RSpec::Core::RakeTask.new(:spec => spec_prereq) do |t|
+    t.pattern = "./spec/**/*_spec.rb"
+    t.spec_opts = ["-f", "Beagle::TimedFormatter"]
+  end
+    
+Generates an html page under $PROJECT_ROOT/reports/beagle/index.html
