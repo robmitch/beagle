@@ -1,3 +1,8 @@
+=== Version 0.1.1 / 2011-05-02
+
+* Fix a bug where times less than zero are zeroed
+* Show legend on charts
+
 === Version 0.1.0 / 2011-05-02
 
 * First release
