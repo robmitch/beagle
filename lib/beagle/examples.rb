@@ -11,7 +11,7 @@ module Beagle
     end
 
     def set_time(example, time)
-      @entries[example.file_path].last[1] = time
+      @entries[example.file_path].last[1] = (time < 0 ? 0 : time)
     end
 
     def files
