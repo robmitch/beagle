@@ -14,7 +14,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency("rspec-core", ">= 2.0.0")
 
   gem.add_development_dependency("rake", "~> 0.8.7")
-  gem.add_development_dependency("rspec-core", "~> 2.0.0")
+  gem.add_development_dependency("rspec", "~> 2.0.0")
 
   gem.require_path = "lib"
   gem.files = Dir["lib/**/*", "README.markdown"]
